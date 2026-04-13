@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fixoo Pro</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f7f8fa;--bg3:#f0f2f5;
+  --txt:#111111;--txt2:#555555;--txt3:#888888;
+  --border:#e0e0e0;--border2:#c8c8c8;
+  --blue:#185FA5;--blue-light:#E6F1FB;--blue-dark:#0C447C;
+  --green:#3B6D11;--green-light:#EAF3DE;
+  --amber:#854F0B;--amber-light:#FAEEDA;
+  --red:#A32D2D;--red-light:#FCEBEB;
+  --radius:8px;--radius-lg:12px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg3);color:var(--txt);font-size:14px;min-height:100vh}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(0.95);opacity:0}60%{transform:scale(1.03)}100%{transform:scale(1);opacity:1}}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.ani{animation:fadeIn 0.25s ease both}
+.pop{animation:pop 0.2s ease both}
+
+/* LAYOUT */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:220px;background:var(--bg);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
+.logo-box{display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;border-radius:9px;background:var(--blue);display:flex;align-items:center;justify-content:center}
+.logo-name{font-size:16px;font-weight:600;color:var(--txt)}
+.logo-sub{font-size:11px;color:var(--txt3);margin-top:1px}
+.sidebar-nav{flex:1;padding:10px 8px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius);cursor:pointer;color:var(--txt2);font-size:13px;font-weight:500;transition:all 0.15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--bg2);color:var(--txt)}
+.nav-item.on{background:var(--blue-light);color:var(--blue-dark);font-weight:600}
+.nav-item svg{flex-shrink:0;opacity:0.7}
+.nav-item.on svg{opacity:1}
+.sidebar-footer{padding:12px 8px;border-top:1px solid var(--border)}
+.stor-pill{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--radius);background:var(--bg2);font-size:12px;color:var(--txt2)}
+
+/* MAIN */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.topbar{background:var(--bg);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-title{font-size:16px;font-weight:600}
+.topbar-actions{display:flex;gap:8px}
+.content{padding:24px;flex:1}
+
+/* CARDS */
+.card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:14px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:12px;color:var(--txt)}
+
+/* BUTTONS */
+.btn{padding:7px 14px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--txt);cursor:pointer;font-family:inherit;transition:all 0.12s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:var(--bg2)}
+.btn:active{transform:scale(0.97)}
+.btn-primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn-primary:hover{background:var(--blue-dark)}
+.btn-success{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-success:hover{background:#27500A}
+.btn-danger{color:var(--red);border-color:#F09595}
+.btn-danger:hover{background:var(--red-light)}
+.btn-sm{padding:5px 10px;font-size:12px}
+
+/* INPUTS */
+.inp{width:100%;padding:8px 10px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--txt);outline:none;font-family:inherit;transition:border-color 0.15s}
+.inp:focus{border-color:var(--blue)}
+.sel{padding:7px 10px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--txt);outline:none;font-family:inherit}
+textarea.inp{resize:vertical;min-height:68px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--txt2);margin-bottom:5px;font-weight:500}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto;border-radius:var(--radius-lg);border:1px solid var(--border)}
+.tbl{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+.tbl th{text-align:left;font-weight:600;font-size:11px;color:var(--txt3);padding:10px 12px;border-bottom:1px solid var(--border);background:var(--bg2);text-transform:uppercase;letter-spacing:0.4px}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--txt);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--bg2)}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;font-size:11px;padding:2px 8px;border-radius:99px;font-weight:500}
+.b-blue{background:var(--blue-light);color:var(--blue-dark)}
+.b-green{background:var(--green-light);color:var(--green)}
+.b-amber{background:var(--amber-light);color:var(--amber)}
+.b-red{background:var(--red-light);color:var(--red)}
+.b-gray{background:#F1EFE8;color:#444}
+
+/* AVATAR */
+.avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.metric{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;text-align:center}
+.metric-val{font-size:26px;font-weight:700;color:var(--txt)}
+.metric-lbl{font-size:11px;color:var(--txt3);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.4px}
+.metric-sub{font-size:11px;color:var(--txt3);margin-top:2px}
+
+/* STORAGE OPTIONS */
+.stor-opt{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1.5px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:all 0.15s;margin-bottom:8px}
+.stor-opt:hover{border-color:var(--border2);background:var(--bg2)}
+.stor-opt.selected{border-color:var(--blue);background:var(--blue-light)}
+.stor-icon{width:38px;height:38px;border-radius:var(--radius);background:var(--bg2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s}
+.stor-opt.selected .stor-icon{background:var(--blue)}
+.stor-opt.selected .stor-icon svg{stroke:#fff}
+.stor-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border2);margin-left:auto;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s}
+.stor-opt.selected .stor-radio{background:var(--blue);border-color:var(--blue)}
+
+/* EXPORT OPTIONS */
+.exp-opt{display:flex;align-items:center;gap:12px;padding:12px 15px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:background 0.12s;margin-bottom:8px}
+.exp-opt:hover{background:var(--bg2)}
+.exp-icon{width:38px;height:38px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg);border-radius:var(--radius-lg);border:1px solid var(--border);padding:24px;width:100%;max-width:480px;animation:pop 0.2s ease;box-shadow:0 8px 32px rgba(0,0,0,0.12)}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:18px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+
+/* TOAST */
+.toast-fixed{position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:10px 18px;border-radius:var(--radius);font-size:13px;animation:toastIn 0.2s ease;font-weight:500}
+.toast-ok{background:#EAF3DE;color:#27500A;border:1px solid #C0DD97}
+.toast-err{background:var(--red-light);color:var(--red);border:1px solid #F7C1C1}
+
+/* SEARCH */
+.search-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.search-inp{flex:1;min-width:160px}
+
+/* PROVIDER CARD */
+.prov-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin-bottom:10px;transition:box-shadow 0.15s}
+.prov-card:hover{box-shadow:0 2px 12px rgba(0,0,0,0.07)}
+.prov-header{display:flex;align-items:center;gap:12px}
+.prov-body{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;color:var(--txt2);line-height:1.6}
+.prov-actions{display:flex;gap:8px;margin-top:12px}
+
+/* PRICE INPUT */
+.price-inp{width:100px;padding:5px 8px;font-size:13px;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--txt);text-align:right;font-family:inherit}
+.price-inp:focus{outline:none;border-color:var(--blue)}
+.price-cell{display:flex;align-items:center;gap:5px}
+.currency-sym{font-size:13px;color:var(--txt3)}
+
+/* SECTION */
+.sec{display:none}.sec.on{display:block}
+
+/* EMPTY STATE */
+.empty{text-align:center;padding:40px 20px;color:var(--txt3)}
+.empty svg{margin-bottom:12px;opacity:0.4}
+.empty p{font-size:14px}
+
+/* PILL TOGGLE */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--bg2);color:var(--txt2);transition:all 0.12s;font-weight:500}
+.pill.on{background:var(--blue-light);color:var(--blue-dark);border-color:#85B7EB}
+
+/* CLOUD CONFIG */
+.cloud-config{display:none;margin-top:12px;padding:14px;background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-box">
+        <div class="logo-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div>
+          <div class="logo-name">Fixoo Pro</div>
+          <div class="logo-sub">Provider Manager</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <button class="nav-item on" onclick="tab('dashboard',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" onclick="tab('providers',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        Providers
+      </button>
+      <button class="nav-item" onclick="tab('pricing',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        Pricing
+      </button>
+      <button class="nav-item" onclick="tab('export',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+      <button class="nav-item" onclick="tab('settings',this)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </button>
+    </div>
+    <div class="sidebar-footer">
+      <div class="stor-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span id="stor-label">Local storage</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-actions" id="topbar-actions"></div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="sec on" id="sec-dashboard">
+        <div class="metrics" id="dash-metrics"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="card">
+            <div class="card-title">Recent providers</div>
+            <div id="dash-recent"></div>
+          </div>
+          <div class="card">
+            <div class="card-title">Quick actions</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn btn-primary" onclick="tab('providers',document.querySelectorAll('.nav-item')[1]);setTimeout(openAdd,80)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add new provider
+              </button>
+              <button class="btn" onclick="tab('pricing',document.querySelectorAll('.nav-item')[2])">Set service prices</button>
+              <button class="btn" onclick="tab('export',document.querySelectorAll('.nav-item')[3])">Export data</button>
+              <button class="btn" onclick="tab('settings',document.querySelectorAll('.nav-item')[4])">Settings</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROVIDERS -->
+      <div class="sec" id="sec-providers">
+        <div class="search-row">
+          <input class="inp search-inp" id="srch" placeholder="Search by name, phone, or specialization..." oninput="renderProviders()"/>
+          <button class="btn btn-primary" onclick="openAdd()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add provider
+          </button>
+        </div>
+        <div id="prov-list"></div>
+      </div>
+
+      <!-- PRICING -->
+      <div class="sec" id="sec-pricing">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap">
+          <select class="sel" id="price-sel" onchange="renderPricing()" style="flex:1;min-width:200px"></select>
+          <button class="btn btn-success" onclick="savePrices()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Save prices
+          </button>
+        </div>
+        <div style="font-size:12px;color:var(--txt3);margin-bottom:12px" id="price-hint">Select a provider to manage their rates.</div>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead><tr><th style="width:44px">#</th><th>Service name</th><th style="width:160px">Rate</th></tr></thead>
+            <tbody id="svc-rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="sec" id="sec-export">
+        <div class="card">
+          <div class="card-title">Select data to export</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="pill on" id="exp-prov" onclick="this.classList.toggle('on')">Providers</button>
+            <button class="pill on" id="exp-price" onclick="this.classList.toggle('on')">Pricing</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Choose export format</div>
+          <div class="exp-opt" onclick="doExport('csv')">
+            <div class="exp-icon" style="background:#EAF3DE;color:#27500A">CSV</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">CSV file</div>
+              <div style="font-size:12px;color:var(--txt3)">Open in Excel, Google Sheets, or any spreadsheet app</div>
+            </div>
+            <svg style="margin-left:auto;flex-shrink:0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          </div>
+          <div class="exp-opt" onclick="doExport('json')">
+            <div class="exp-icon" style="background:var(--blue-light);color:var(--blue-dark)">JSON</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">JSON backup</div>
+              <div style="font-size:12px;color:var(--txt3)">Full data backup, restore anytime</div>
+            </div>
+            <svg style="margin-left:auto;flex-shrink:0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          </div>
+          <div class="exp-opt" onclick="doExport('txt')">
+            <div class="exp-icon" style="background:#F1EFE8;color:#444">TXT</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">Plain text report</div>
+              <div style="font-size:12px;color:var(--txt3)">Simple readable format, good for printing</div>
+            </div>
+            <svg style="margin-left:auto;flex-shrink:0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          </div>
+          <div class="exp-opt" onclick="doExport('html')">
+            <div class="exp-icon" style="background:var(--amber-light);color:var(--amber)">HTML</div>
+            <div>
+              <div style="font-size:13px;font-weight:600">HTML report</div>
+              <div style="font-size:12px;color:var(--txt3)">Open in browser, formatted and print-ready</div>
+            </div>
+            <svg style="margin-left:auto;flex-shrink:0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="sec" id="sec-settings">
+        <div class="card">
+          <div class="card-title">Data storage location</div>
+          <div style="font-size:12px;color:var(--txt3);margin-bottom:14px">Choose where your data is saved. This affects exports and backups.</div>
+          <div class="stor-opt selected" id="stor-local" onclick="setStor('local')">
+            <div class="stor-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600">This computer <span class="badge b-blue" style="margin-left:6px">Default</span></div>
+              <div style="font-size:12px;color:var(--txt3)">Saved locally in the app. Works offline, fast.</div>
+            </div>
+            <div class="stor-radio" id="rad-local"></div>
+          </div>
+          <div class="stor-opt" id="stor-pendrive" onclick="setStor('pendrive')">
+            <div class="stor-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="2" width="10" height="13" rx="2"/><path d="M7 9H4a2 2 0 00-2 2v7a2 2 0 002 2h16a2 2 0 002-2v-7a2 2 0 00-2-2h-3"/><circle cx="12" cy="17" r="1.5"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600">Pen drive / external drive</div>
+              <div style="font-size:12px;color:var(--txt3)">Exports and backups saved directly to your pen drive or folder.</div>
+            </div>
+            <div class="stor-radio" id="rad-pendrive"></div>
+          </div>
+          <div class="stor-opt" id="stor-cloud" onclick="setStor('cloud')">
+            <div class="stor-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:600">Cloud / Firebase</div>
+              <div style="font-size:12px;color:var(--txt3)">Sync data across devices using Firebase Firestore.</div>
+            </div>
+            <div class="stor-radio" id="rad-cloud"></div>
+          </div>
+          <div class="cloud-config" id="cloud-config">
+            <div class="field"><label>Firebase Project ID</label><input class="inp" id="fb-pid" placeholder="your-project-id"/></div>
+            <div class="field" style="margin-bottom:0"><label>Firebase API Key</label><input class="inp" id="fb-key" type="password" placeholder="AIza..."/></div>
+            <button class="btn btn-primary" style="margin-top:10px" onclick="saveCloudConfig()">Save Firebase config</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">App preferences</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+            <div><div style="font-size:13px;font-weight:500">Business name</div><div style="font-size:12px;color:var(--txt3)">Shown in exports and reports</div></div>
+            <input class="inp" id="biz-name" style="width:180px" placeholder="Fixoo Plumber" onchange="saveAppSettings()"/>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
+            <div><div style="font-size:13px;font-weight:500">Currency</div><div style="font-size:12px;color:var(--txt3)">Used in pricing tables and exports</div></div>
+            <select class="sel" id="currency-sel" onchange="saveCurrency()">
+              <option value="₹">₹ Indian Rupee</option>
+              <option value="$">$ US Dollar</option>
+              <option value="€">€ Euro</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Data management</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" onclick="doExport('json')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Backup data
+            </button>
+            <button class="btn" onclick="importData()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              Import JSON backup
+            </button>
+            <button class="btn btn-danger" onclick="clearAll()">Clear all data</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT PROVIDER MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-ttl">Add provider</div>
+    <div class="field-row">
+      <div class="field"><label>Full name *</label><input class="inp" id="p-name" placeholder="Ramesh Kumar"/></div>
+      <div class="field"><label>Contact number *</label><input class="inp" id="p-phone" type="tel" placeholder="9876543210"/></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>WhatsApp number</label><input class="inp" id="p-wa" placeholder="If different"/></div>
+      <div class="field"><label>Specialization</label><input class="inp" id="p-spec" placeholder="e.g. Drain cleaning"/></div>
+    </div>
+    <div class="field"><label>Address</label><textarea class="inp" id="p-addr" placeholder="Full address"></textarea></div>
+    <div class="field" style="margin-bottom:0"><label>Notes</label><input class="inp" id="p-notes" placeholder="Any extra info"/></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveProv()">Save provider</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-fixed" id="toast-area"></div>
+
+<!-- HIDDEN FILE INPUT FOR IMPORT -->
+<input type="file" id="import-input" accept=".json" style="display:none" onchange="handleImport(event)"/>
+
+<script>
+const SVCS=["Drain Cleaning","Toilet repair and replacement","Faucet repair and replacement","Indian toilet installation","English toilet installation","Grease trap cleaning","Backflow prevention","Water filtration systems","Sewer line cleaning and repair","Pipe bursting","Hydro jetting","Burst pipe repair","Leaking water heater repair","Clogged drain repair","Toilet overflow","New shower, tap, and spray fittings","Full house repiping","Filling gaps between tiles in washroom","New Sink installation","New water tank installation","Full house drainage check","Switching from Indian toilet to English one"];
+const AVBG=["#E6F1FB","#EAF3DE","#FAEEDA","#FBEAF0","#F1EFE8"];
+const AVTC=["#0C447C","#27500A","#633806","#72243E","#444441"];
+
+let provs=[],pricing={},editId=null,stor='local',currency='₹',bizName='Fixoo Plumber';
+
+function ld(){
+  try{provs=JSON.parse(localStorage.getItem('fx_provs')||'[]')}catch(e){provs=[]}
+  try{pricing=JSON.parse(localStorage.getItem('fx_pricing')||'{}')}catch(e){pricing={}}
+  stor=localStorage.getItem('fx_stor')||'local';
+  currency=localStorage.getItem('fx_cur')||'₹';
+  bizName=localStorage.getItem('fx_biz')||'Fixoo Plumber';
+  const cs=document.getElementById('currency-sel');if(cs)cs.value=currency;
+  const bn=document.getElementById('biz-name');if(bn)bn.value=bizName;
+  setStor(stor,true);
+}
+
+function sv(){
+  localStorage.setItem('fx_provs',JSON.stringify(provs));
+  localStorage.setItem('fx_pricing',JSON.stringify(pricing));
+}
+
+function ini(n){return n.trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?'}
+
+function tab(id,el){
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('sec-'+id).classList.add('on');
+  const titles={dashboard:'Dashboard',providers:'Providers',pricing:'Service Pricing',export:'Export Data',settings:'Settings'};
+  document.getElementById('page-title').textContent=titles[id]||id;
+  const actions={providers:'<button class="btn btn-primary" onclick="openAdd()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add provider</button>',pricing:'<button class="btn btn-success" onclick="savePrices()">Save prices</button>'};
+  document.getElementById('topbar-actions').innerHTML=actions[id]||'';
+  if(id==='dashboard')renderDash();
+  if(id==='providers')renderProviders();
+  if(id==='pricing'){refreshPriceSel();renderPricing();}
+}
+
+function renderDash(){
+  const totalP=Object.values(pricing).reduce((a,p)=>a+Object.keys(p).length,0);
+  const avgP=provs.length&&totalP?Math.round(totalP/provs.length):0;
+  document.getElementById('dash-metrics').innerHTML=`
+    <div class="metric ani"><div class="metric-lbl">Total providers</div><div class="metric-val">${provs.length}</div><div class="metric-sub">registered</div></div>
+    <div class="metric ani"><div class="metric-lbl">Prices set</div><div class="metric-val">${totalP}</div><div class="metric-sub">across all providers</div></div>
+    <div class="metric ani"><div class="metric-lbl">Services</div><div class="metric-val">${SVCS.length}</div><div class="metric-sub">total services</div></div>
+    <div class="metric ani"><div class="metric-lbl">Avg prices/provider</div><div class="metric-val">${avgP}</div><div class="metric-sub">services priced</div></div>`;
+  const rec=provs.slice(-4).reverse();
+  document.getElementById('dash-recent').innerHTML=rec.length?rec.map((p,i)=>{
+    const ci=provs.indexOf(p)%5;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;${i<rec.length-1?'border-bottom:1px solid var(--border)':''}">
+      <div class="avatar" style="background:${AVBG[ci]};color:${AVTC[ci]}">${ini(p.name)}</div>
+      <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.name}</div><div style="font-size:12px;color:var(--txt3)">${p.phone}</div></div>
+      ${p.spec?`<span class="badge b-gray">${p.spec.split(',')[0].trim()}</span>`:''}
+    </div>`;
+  }).join(''):'<div style="font-size:13px;color:var(--txt3);padding:8px 0">No providers added yet.</div>';
+}
+
+function renderProviders(){
+  const q=(document.getElementById('srch')||{value:''}).value.toLowerCase();
+  const fl=provs.filter(p=>p.name.toLowerCase().includes(q)||p.phone.includes(q)||(p.spec||'').toLowerCase().includes(q));
+  const el=document.getElementById('prov-list');
+  if(!fl.length){
+    el.innerHTML=`<div class="empty"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg><p>${provs.length?'No results found.':'No providers yet. Add your first provider!'}</p></div>`;
+    return;
+  }
+  el.innerHTML=fl.map((p,idx)=>{
+    const ci=provs.indexOf(p)%5;
+    const pc=Object.keys(pricing[p.id]||{}).length;
+    return `<div class="prov-card ani" style="animation-delay:${idx*0.03}s">
+      <div class="prov-header">
+        <div class="avatar" style="background:${AVBG[ci]};color:${AVTC[ci]}">${ini(p.name)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600">${p.name}</div>
+          <div style="font-size:12px;color:var(--txt3)">${p.phone}${p.wa&&p.wa!==p.phone?' &nbsp;|&nbsp; WA: '+p.wa:''}</div>
+        </div>
+        ${p.spec?`<span class="badge b-blue">${p.spec.split(',')[0].trim()}</span>`:''}
+        <span class="badge ${pc>0?'b-green':'b-gray'}">${pc} prices</span>
+      </div>
+      ${(p.addr||p.notes)?`<div class="prov-body">${p.addr?'<div><b>Address:</b> '+p.addr+'</div>':''}${p.notes?'<div><b>Notes:</b> '+p.notes+'</div>':''}</div>`:''}
+      <div class="prov-actions">
+        <button class="btn btn-sm" onclick="editProv('${p.id}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="delProv('${p.id}')">Delete</button>
+        <button class="btn btn-sm" style="margin-left:auto" onclick="goPrice('${p.id}')">Set prices →</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function goPrice(id){
+  tab('pricing',document.querySelectorAll('.nav-item')[2]);
+  setTimeout(()=>{document.getElementById('price-sel').value=id;renderPricing();},60);
+}
+
+function refreshPriceSel(){
+  const s=document.getElementById('price-sel');
+  const prev=s.value;
+  s.innerHTML='<option value="">— Select a provider —</option>'+provs.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  if(prev)s.value=prev;
+}
+
+function renderPricing(){
+  const pid=document.getElementById('price-sel').value;
+  const hint=document.getElementById('price-hint');
+  const tbody=document.getElementById('svc-rows');
+  if(!pid){
+    hint.textContent='Select a provider above to manage their service rates.';
+    tbody.innerHTML=SVCS.map((s,i)=>`<tr><td style="color:var(--txt3);font-size:12px">${i+1}</td><td style="color:var(--txt3)">${s}</td><td><input class="price-inp" disabled placeholder="—"/></td></tr>`).join('');
+    return;
+  }
+  const prov=provs.find(p=>p.id===pid);
+  const set=Object.keys(pricing[pid]||{}).length;
+  hint.textContent=`Editing: ${prov?prov.name:''} — ${set} of ${SVCS.length} services priced`;
+  if(!pricing[pid])pricing[pid]={};
+  tbody.innerHTML=SVCS.map((s,i)=>`<tr>
+    <td style="color:var(--txt3);font-size:12px">${i+1}</td>
+    <td>${s}</td>
+    <td><div class="price-cell"><span class="currency-sym">${currency}</span><input class="price-inp" type="number" min="0" id="sp${i}" value="${pricing[pid][i]!==undefined?pricing[pid][i]:''}" placeholder="0"/></div></td>
+  </tr>`).join('');
+}
+
+function savePrices(){
+  const pid=document.getElementById('price-sel').value;
+  if(!pid){showToast('Select a provider first!','err');return;}
+  if(!pricing[pid])pricing[pid]={};
+  SVCS.forEach((_,i)=>{
+    const inp=document.getElementById('sp'+i);
+    if(inp){const v=inp.value.trim();if(v!=='')pricing[pid][i]=parseFloat(v);else delete pricing[pid][i];}
+  });
+  sv();
+  renderPricing();
+  showToast('Prices saved successfully!','ok');
+}
+
+function openAdd(){
+  editId=null;
+  document.getElementById('modal-ttl').textContent='Add provider';
+  ['p-name','p-phone','p-wa','p-addr','p-spec','p-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('modal').classList.add('open');
+  setTimeout(()=>document.getElementById('p-name').focus(),100);
+}
+
+function editProv(id){
+  const p=provs.find(x=>x.id===id);if(!p)return;
+  editId=id;
+  document.getElementById('modal-ttl').textContent='Edit provider';
+  document.getElementById('p-name').value=p.name;
+  document.getElementById('p-phone').value=p.phone;
+  document.getElementById('p-wa').value=p.wa||'';
+  document.getElementById('p-addr').value=p.addr||'';
+  document.getElementById('p-spec').value=p.spec||'';
+  document.getElementById('p-notes').value=p.notes||'';
+  document.getElementById('modal').classList.add('open');
+}
+
+function delProv(id){
+  if(!confirm('Delete this provider? Their pricing data will also be removed.'))return;
+  provs=provs.filter(p=>p.id!==id);
+  delete pricing[id];
+  sv();renderProviders();renderDash();
+  showToast('Provider deleted.','ok');
+}
+
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+
+function saveProv(){
+  const name=document.getElementById('p-name').value.trim();
+  const phone=document.getElementById('p-phone').value.trim();
+  if(!name){showToast('Name is required!','err');return;}
+  if(!phone){showToast('Contact number is required!','err');return;}
+  const obj={name,phone,wa:document.getElementById('p-wa').value.trim(),addr:document.getElementById('p-addr').value.trim(),spec:document.getElementById('p-spec').value.trim(),notes:document.getElementById('p-notes').value.trim()};
+  if(editId){Object.assign(provs.find(x=>x.id===editId),obj);}
+  else{obj.id=Date.now().toString();obj.created=new Date().toLocaleDateString('en-IN');provs.push(obj);}
+  sv();closeModal();renderProviders();renderDash();
+  showToast(editId?'Provider updated!':'Provider added!','ok');
+}
+
+function setStor(s,init){
+  stor=s;localStorage.setItem('fx_stor',s);
+  ['local','pendrive','cloud'].forEach(k=>{
+    const o=document.getElementById('stor-'+k);
+    const r=document.getElementById('rad-'+k);
+    if(!o)return;
+    if(k===s){
+      o.classList.add('selected');
+      r.innerHTML='<svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg>';
+      r.style.background='var(--blue)';r.style.borderColor='var(--blue)';
+    } else {
+      o.classList.remove('selected');
+      r.innerHTML='';r.style.background='';r.style.borderColor='';
+    }
+  });
+  document.getElementById('cloud-config').style.display=s==='cloud'?'block':'none';
+  const labels={local:'Local storage',pendrive:'Pen drive',cloud:'Cloud / Firebase'};
+  document.getElementById('stor-label').textContent=labels[s];
+  if(!init)showToast('Storage preference saved!','ok');
+}
+
+function saveCurrency(){currency=document.getElementById('currency-sel').value;localStorage.setItem('fx_cur',currency);showToast('Currency updated.','ok');}
+function saveAppSettings(){bizName=document.getElementById('biz-name').value.trim()||'Fixoo Plumber';localStorage.setItem('fx_biz',bizName);showToast('Settings saved.','ok');}
+function saveCloudConfig(){localStorage.setItem('fx_fb_pid',document.getElementById('fb-pid').value.trim());localStorage.setItem('fx_fb_key',document.getElementById('fb-key').value.trim());showToast('Firebase config saved!','ok');}
+function clearAll(){if(!confirm('This will delete ALL providers and pricing data. Are you sure?'))return;provs=[];pricing={};sv();renderProviders();renderDash();showToast('All data cleared.','ok');}
+
+function doExport(fmt){
+  const wantP=document.getElementById('exp-prov').classList.contains('on');
+  const wantPr=document.getElementById('exp-price').classList.contains('on');
+  if(!wantP&&!wantPr){showToast('Select at least one data type to export!','err');return;}
+  let content='',filename='fixoo-export',mime='text/plain';
+  const ts=new Date().toLocaleDateString('en-IN').replace(/\//g,'-');
+  if(fmt==='csv'){
+    mime='text/csv';filename=`fixoo-providers-${ts}.csv`;
+    let rows=[];
+    if(wantP){rows.push(['Type','Name','Phone','WhatsApp','Address','Specialization','Notes','Added On']);provs.forEach(p=>rows.push(['PROVIDER',p.name,p.phone,p.wa||'',p.addr||'',p.spec||'',p.notes||'',p.created||'']));}
+    if(wantPr){if(wantP)rows.push([]);rows.push(['Type','Provider Name','Sr No','Service','Rate ('+currency+')']);provs.forEach(p=>{const pr=pricing[p.id]||{};SVCS.forEach((s,i)=>{if(pr[i]!==undefined)rows.push(['PRICE',p.name,i+1,s,pr[i]])});});}
+    content=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+  } else if(fmt==='json'){
+    mime='application/json';filename=`fixoo-backup-${ts}.json`;
+    content=JSON.stringify({business:bizName,exported:new Date().toISOString(),version:'1.0',providers:wantP?provs:[],pricing:wantPr?pricing:{}},null,2);
+  } else if(fmt==='txt'){
+    filename=`fixoo-report-${ts}.txt`;
+    content=`${bizName.toUpperCase()} — PROVIDER REPORT\nExported: ${new Date().toLocaleString('en-IN')}\n${'='.repeat(55)}\n\n`;
+    if(wantP){content+=`PROVIDERS (${provs.length} total)\n${'-'.repeat(40)}\n`;provs.forEach((p,i)=>{content+=`\n${i+1}. ${p.name}\n   Phone    : ${p.phone}\n${p.wa?'   WhatsApp : '+p.wa+'\n':''}${p.addr?'   Address  : '+p.addr+'\n':''}${p.spec?'   Expertise: '+p.spec+'\n':''}${p.notes?'   Notes    : '+p.notes+'\n':''}`;});}
+    if(wantPr){content+=`\n\nSERVICE PRICING\n${'-'.repeat(40)}\n`;provs.forEach(p=>{const pr=pricing[p.id]||{};const keys=Object.keys(pr);if(keys.length){content+=`\n${p.name}:\n`;keys.forEach(i=>content+=`  ${Number(i)+1}. ${SVCS[i]}: ${currency}${pr[i]}\n`);}});}
+  } else if(fmt==='html'){
+    mime='text/html';filename=`fixoo-report-${ts}.html`;
+    let body='';
+    if(wantP)body+=`<h2>Providers</h2><table><thead><tr><th>#</th><th>Name</th><th>Phone</th><th>WhatsApp</th><th>Address</th><th>Specialization</th></tr></thead><tbody>${provs.map((p,i)=>`<tr><td>${i+1}</td><td><b>${p.name}</b></td><td>${p.phone}</td><td>${p.wa||'-'}</td><td>${p.addr||'-'}</td><td>${p.spec||'-'}</td></tr>`).join('')}</tbody></table>`;
+    if(wantPr){body+=`<h2>Service Pricing</h2>`;provs.forEach(p=>{const pr=pricing[p.id]||{};const keys=Object.keys(pr);if(keys.length)body+=`<h3>${p.name}</h3><table><thead><tr><th>#</th><th>Service</th><th>Rate</th></tr></thead><tbody>${keys.map(i=>`<tr><td>${Number(i)+1}</td><td>${SVCS[i]}</td><td>${currency}${pr[i]}</td></tr>`).join('')}</tbody></table>`;});}
+    content=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${bizName} Report</title><style>body{font-family:Segoe UI,sans-serif;padding:32px;color:#111;max-width:900px;margin:auto}h1{color:#185FA5;margin-bottom:4px}h2{margin-top:28px;margin-bottom:12px;font-size:16px;color:#333}h3{font-size:14px;margin:14px 0 6px;color:#555}table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13px}th,td{padding:8px 12px;text-align:left;border:1px solid #e0e0e0}th{background:#f5f5f5;font-weight:600}.meta{font-size:12px;color:#888;margin-bottom:24px}</style></head><body><h1>${bizName}</h1><div class="meta">Report exported on ${new Date().toLocaleString('en-IN')}</div>${body}</body></html>`;
+  }
+  const blob=new Blob([content],{type:mime});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+  showToast(`Exported as ${fmt.toUpperCase()} — check your Downloads folder!`,'ok');
+}
+
+function importData(){document.getElementById('import-input').click();}
+function handleImport(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(data.providers)provs=data.providers;
+      if(data.pricing)pricing=data.pricing;
+      sv();renderDash();renderProviders();
+      showToast('Data imported successfully!','ok');
+    }catch(err){showToast('Invalid backup file!','err');}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+
+function showToast(msg,type){
+  const area=document.getElementById('toast-area');
+  const el=document.createElement('div');
+  el.className='toast toast-'+(type||'ok');
+  el.textContent=msg;
+  area.appendChild(el);
+  setTimeout(()=>el.remove(),3000);
+}
+
+document.getElementById('modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+
+ld();
+renderDash();
+</script>
+</body>
+</html>
