@@ -1,7 +1,7 @@
 {
   "name": "fixoo-pro",
   "version": "1.0.0",
-  "description": "Fixoo Plumber Provider Manager",
+  "description": "Fixoo Provider Manager",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -12,10 +12,12 @@
     "productName": "Fixoo Pro",
     "files": [
       "index.html",
-      "main.js"
+      "main.js",
+      "icon.ico"
     ],
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "icon": "icon.ico"
     },
     "nsis": {
       "oneClick": false,
