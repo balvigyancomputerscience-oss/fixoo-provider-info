@@ -1,0 +1,20 @@
+const { app, BrowserWindow } = require('electron')
+const path = require('path')
+
+function createWindow() {
+  const win = new BrowserWindow({
+    width: 1100,
+    height: 750,
+    minWidth: 800,
+    minHeight: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    },
+    title: 'Fixoo Pro'
+  })
+  win.loadFile('index.html')
+}
+
+app.whenReady().then(createWindow)
+app.on('window-all-closed', () => app.quit())

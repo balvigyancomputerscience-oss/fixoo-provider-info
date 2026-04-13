@@ -1,0 +1,29 @@
+{
+  "name": "fixoo-pro",
+  "version": "1.0.0",
+  "description": "Fixoo Plumber Provider Manager",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.fixoo.pro",
+    "productName": "Fixoo Pro",
+    "files": [
+      "index.html",
+      "main.js"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^29.0.0",
+    "electron-builder": "^24.0.0"
+  }
+}
