@@ -10,12 +10,21 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
-      - run: npm run build
-      - uses: actions/upload-artifact@v4
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build EXE
+        run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
           name: Fixoo-Pro-Windows
           path: dist/*.exe
